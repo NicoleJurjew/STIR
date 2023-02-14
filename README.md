@@ -1,4 +1,5 @@
-# STIR: Software for Tomographic Image Reconstruction.
+dsfgsgfsdfg sd
+f# STIR: Software for Tomographic Image Reconstruction.
 
 STIR is Open Source software for use in tomographic imaging. Its aim is to
 provide a Multi-Platform Object-Oriented framework for all data
