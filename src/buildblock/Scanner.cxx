@@ -207,6 +207,32 @@ Scanner::Scanner(Type scanner_type)
                0.145f, 511.f); // TODO bucket/singles info incorrect? 224 buckets in total, but not sure how distributed
     break;
 
+  case Vision_600:
+    set_params(
+      Vision_600,                                       // type
+      string_list("Siemens Vision", "Vision", "1208"),  // names
+      80,                                               // rings
+      520,                                              // max n non-arc-corr bins
+      520,                                              // default n arc-corr bins
+      21*38,                                            // num detector per ring
+      420.0F,                                           // inner ring radius (mm)
+      7.0F,  // unsure on this                          // avg DoI (mm)
+      3.29114F,                                         // ring spacing (mm)
+      1.6F,                                             // bin size (mm)
+      0.0F,                                             // intrinsic tilt
+      // 8 axial block, 38 transaxial blocks total, no buckets?
+      1, 1,                                             // n axial/trans blocks per bucket
+      10, 21,                                           // n axial/trans xtals per block
+      10, 21,                                           // n axial/trans xtals per singles unit
+      1,                                                // n detector layers
+      // energy
+      0.F, 511.F,
+      33,                                               // max n timing position
+      143.231,                                          // timing position bin size
+      214.F     // ??                                    // timing resolution
+    );
+    break;
+
   case Siemens_mCT:
     // 13x13 blocks, 1 virtual "crystal" along axial and transaxial direction, 48 blocks along the ring, 4 blocks in axial direction
     set_params(Siemens_mCT, string_list("Siemens mCT", "mCT", "2011", "1104" /* used in norm files */, "1094" /* used in attenuation files */),
