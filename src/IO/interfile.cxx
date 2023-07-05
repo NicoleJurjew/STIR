@@ -1060,7 +1060,7 @@ read_interfile_PDFS_Siemens(istream& input,
   if (hdr.compression)
     warning("Siemens projection data is compressed. Reading of raw data will fail.");
 
-  return new ProjDataFromStream(hdr.get_exam_info_sptr(),
+  auto pdfs_ptr = new ProjDataFromStream(hdr.get_exam_info_sptr(),
     hdr.data_info_ptr->create_shared_clone(),
     data_in,
     hdr.data_offset_each_dataset[0],
@@ -1070,6 +1070,13 @@ read_interfile_PDFS_Siemens(istream& input,
     hdr.file_byte_order,
     1.);
 
+   if (hdr.timing_poss_sequence.size() > 1)
+   {
+     pdfs_ptr->set_timing_poss_sequence_in_stream(hdr.timing_poss_sequence);
+     std::cerr << "read_interfile_Siemens TIMINGPOSSSEQUENCE: " << hdr.timing_poss_sequence;
+   }
+
+   return pdfs_ptr;
 }
 
 ProjDataFromStream* 
@@ -1144,7 +1151,10 @@ read_interfile_PDFS(istream& input,
 				 static_cast<float>(hdr.image_scaling_factors[0][0]));
 
    if (hdr.timing_poss_sequence.size() > 1)
+   {
      pdfs_ptr->set_timing_poss_sequence_in_stream(hdr.timing_poss_sequence);
+     std::cerr << "TIMINGPOSSSEQUENCE: " << hdr.timing_poss_sequence;
+   }
    return pdfs_ptr;
 }
 

@@ -71,6 +71,7 @@ inverse_SSRB(ProjData& proj_data_4D, const ProjData& proj_data_3D)
           for (int k=proj_data_4D.get_proj_data_info_sptr()->get_min_tof_pos_num();
             k<=proj_data_4D.get_proj_data_info_sptr()->get_max_tof_pos_num(); ++k)
           {
+            std::cerr << "INVERSESSRB k: " << k << std::endl;
             sino_4D = proj_data_4D.get_empty_sinogram(out_ax_pos_num, out_segment_num, false, k);
             const float out_m = proj_data_4D_info_sptr->get_m(Bin(out_segment_num, 0, out_ax_pos_num, 0));
 
@@ -94,22 +95,29 @@ inverse_SSRB(ProjData& proj_data_4D, const ProjData& proj_data_3D)
                         {
                           sino_3D_1 = proj_data_3D.get_sinogram(in_ax_pos_num, 0,false, k);
                           sino_4D += sino_3D_1;
+                          std::cerr << "MAX 0 " << sino_3D_1.find_max() << "," << sino_4D.find_max() << "\n";
                         }
                       else if (distance_to_previous < distance_to_next)
                         { // interpolate between the previous axial slice and this one
                           const auto distance_sum = distance_to_previous + distance_to_current;
                           sino_3D_1 = proj_data_3D.get_sinogram(in_ax_pos_num - 1, 0, false, k);
                           sino_3D_2 = proj_data_3D.get_sinogram(in_ax_pos_num, 0, false, k);
+                          std::cerr << "MAX 1 " << sino_3D_1.find_max() << "," << sino_3D_2.find_max();
                           sino_3D_1.sapyb(distance_to_current / distance_sum, sino_3D_2, distance_to_previous / distance_sum);
+                          std::cerr << ", " << sino_3D_1.find_max() << ", ";
                           sino_4D += sino_3D_1;
+                          std::cerr << ", " << sino_4D.find_max() << "\n";
                         }
                       else
                         { // interpolate between the next axial slice and this one
                           const auto distance_sum = distance_to_next + distance_to_current;
                           sino_3D_1 = proj_data_3D.get_sinogram(in_ax_pos_num + 1, 0, false, k);
                           sino_3D_2 = proj_data_3D.get_sinogram(in_ax_pos_num, 0, false, k);
+                          std::cerr << "MAX 2 " << sino_3D_1.find_max() << "," << sino_3D_2.find_max();
                           sino_3D_1.sapyb(distance_to_current / distance_sum, sino_3D_2, distance_to_next / distance_sum);
+                          std::cerr << ", " << sino_3D_1.find_max() << ", ";
                           sino_4D += sino_3D_1;
+                          std::cerr << ", " << sino_4D.find_max() << "\n";
                         }
 
                       if (proj_data_4D.set_sinogram(sino_4D) == Succeeded::no)

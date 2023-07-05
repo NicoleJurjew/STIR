@@ -27,6 +27,7 @@
 #include "stir/ProjDataInfoCylindricalArcCorr.h"
 #include "stir/ProjDataInfoCylindricalNoArcCorr.h"
 #include "stir/IO/stir_ecat_common.h"
+#include "stir/stream.h"
 #include <numeric>
 #include <functional>
 
@@ -449,6 +450,7 @@ bool InterfilePDFSHeaderSiemens::post_processing()
   if (this->data_info_ptr->get_num_tof_poss() > 1)
     {
       this->timing_poss_sequence = ecat::find_timing_poss_sequence(*this->data_info_ptr);
+      std::cerr << "InterfileHeaderSiemens TIMINGPOSSSEQUENCE: " << this->timing_poss_sequence;
     }
 
   compression = (standardise_interfile_keyword(compression_as_string) == "on");
