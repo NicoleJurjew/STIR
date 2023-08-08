@@ -37,6 +37,7 @@
 #include "stir/IO/write_data.h"
 #include "stir/IO/read_data.h"
 #include "stir/is_null_ptr.h"
+#include "stir/stream.h"
 #include <numeric>
 #include <iostream>
 #include <fstream>
@@ -450,6 +451,7 @@ ProjDataFromStream::get_offset(const Bin& this_bin) const
     // Now we are just in front of  the correct segment
     if (get_storage_order() == Segment_AxialPos_View_TangPos || get_storage_order() == Timing_Segment_AxialPos_View_TangPos)
     {
+        // std::cerr << "get_offset storage order: Timing_Segment_AxialPos_View_TangPos" << '\n';
         if (proj_data_info_sptr->get_num_tof_poss() > 1)
           {
             // The timing offset will be added to the segment offset to minimise the changes
@@ -482,6 +484,7 @@ ProjDataFromStream::get_offset(const Bin& this_bin) const
     }
     else if (get_storage_order() == Segment_View_AxialPos_TangPos || get_storage_order() == Timing_Segment_View_AxialPos_TangPos)
     {
+        // std::cerr << "get_offset storage order: Timing_Segment_View_AxialPos_TangPos WRONG WRONG WRONG" << '\n';
         if (proj_data_info_sptr->get_num_tof_poss() > 1)
           {
             // The timing offset will be added to the segment offset. This approach we minimise the changes
@@ -536,6 +539,8 @@ ProjDataFromStream::get_sinogram(const int ax_pos_num, const int segment_num,
   Succeeded succeeded = Succeeded::yes;
   Bin bin(segment_num, this->get_min_view_num(), ax_pos_num, this->get_min_tangential_pos_num(), timing_pos);
 
+
+  // std::cerr << "get_sinogram: " << bin << "offset: " << get_offset(bin) << '\n';
 #ifdef STIR_OPENMP
 #pragma omp critical(PROJDATAFROMSTREAMIO)
 #endif
@@ -545,6 +550,7 @@ ProjDataFromStream::get_sinogram(const int ax_pos_num, const int segment_num,
         {
           detail::checked_seekg("get_sinogram", *sino_stream, get_offset(bin));
           succeeded = read_data(*sino_stream, sinogram, on_disk_data_type, scale, on_disk_byte_order);
+          // std::cerr << "get_sinogram storage order: Timing_Segment_AxialPos_View_TangPos" << '\n';
         }  
       else if (get_storage_order() == Segment_View_AxialPos_TangPos || get_storage_order() == Timing_Segment_View_AxialPos_TangPos)
         {
@@ -573,7 +579,7 @@ ProjDataFromStream::get_sinogram(const int ax_pos_num, const int segment_num,
     error("ProjDataFromStream: error reading data: scale factor returned by read_data should be 1");
   if (succeeded == Succeeded::no)
     error("ProjDataFromStream: error reading data");
-
+  std::cerr << "MAX READ " << sinogram.find_max() << "\n";
   sinogram *= scale_factor;
 
   if (make_num_tangential_poss_odd&&(get_num_tangential_poss()%2==0))
@@ -626,7 +632,7 @@ ProjDataFromStream::set_sinogram(const Sinogram<float>& s)
   int timing_pos = s.get_timing_pos_num();
   Bin bin(segment_num, this->get_min_view_num(), ax_pos_num, this->get_min_tangential_pos_num(), timing_pos);
   float scale = scale_factor;
-
+  std::cerr << "set_sinogram: " << bin << "offset: " << get_offset(bin) << '\n';
   Succeeded succeeded = Succeeded::yes;
 #ifdef STIR_OPENMP
 #pragma omp critical(PROJDATAFROMSTREAMIO)
