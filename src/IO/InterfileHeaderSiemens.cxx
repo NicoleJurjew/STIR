@@ -450,7 +450,6 @@ bool InterfilePDFSHeaderSiemens::post_processing()
   if (this->data_info_ptr->get_num_tof_poss() > 1)
     {
       this->timing_poss_sequence = ecat::find_timing_poss_sequence(*this->data_info_ptr);
-      std::cerr << "InterfileHeaderSiemens TIMINGPOSSSEQUENCE: " << this->timing_poss_sequence;
     }
 
   compression = (standardise_interfile_keyword(compression_as_string) == "on");

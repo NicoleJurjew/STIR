@@ -1073,7 +1073,6 @@ read_interfile_PDFS_Siemens(istream& input,
    if (hdr.timing_poss_sequence.size() > 1)
    {
      pdfs_ptr->set_timing_poss_sequence_in_stream(hdr.timing_poss_sequence);
-     std::cerr << "read_interfile_Siemens TIMINGPOSSSEQUENCE: " << hdr.timing_poss_sequence;
    }
 
    return pdfs_ptr;
@@ -1153,7 +1152,6 @@ read_interfile_PDFS(istream& input,
    if (hdr.timing_poss_sequence.size() > 1)
    {
      pdfs_ptr->set_timing_poss_sequence_in_stream(hdr.timing_poss_sequence);
-     std::cerr << "TIMINGPOSSSEQUENCE: " << hdr.timing_poss_sequence;
    }
    return pdfs_ptr;
 }
