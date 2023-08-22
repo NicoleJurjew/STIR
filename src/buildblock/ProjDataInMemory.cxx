@@ -60,8 +60,8 @@ ProjDataInMemory(shared_ptr<const ExamInfo> const& exam_info_sptr,
   :
   ProjDataFromStream(exam_info_sptr, proj_data_info_ptr, shared_ptr<iostream>(), // trick: first initialise sino_stream_ptr to 0
                      std::streamoff(0),
-                     ProjData::standard_segment_sequence(*proj_data_info_ptr), 
-                     proj_data_info_ptr->is_tof_data() ? Timing_Segment_AxialPos_View_TangPos : Segment_AxialPos_View_TangPos)
+                     ProjData::standard_segment_sequence(*proj_data_info_ptr),
+                     Segment_AxialPos_View_TangPos)
 {
   this->create_buffer(initialise_with_0);
   this->create_stream();
