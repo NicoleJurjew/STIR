@@ -623,6 +623,8 @@ InterfilePDFSHeader::InterfilePDFSHeader()
   max_num_timing_poss = -1;
   add_key("Number of TOF time bins",
           &max_num_timing_poss);
+  timing_poss_sequence.clear();
+  add_key("TOF bin order", &timing_poss_sequence);
   size_of_timing_pos = -1.f;
   add_key("Size of timing bin (ps)",
           &size_of_timing_pos);
@@ -718,7 +720,7 @@ int InterfilePDFSHeader::find_storage_order()
         {
             if (matrix_labels[4] == "timing positions")
             {
-                num_timing_poss = matrix_size[4][0];
+                this->num_timing_poss = matrix_size[4][0];
                 storage_order = ProjDataFromStream::Timing_Segment_View_AxialPos_TangPos;
                 num_views = matrix_size[2][0];
 #ifdef _MSC_VER
@@ -726,6 +728,11 @@ int InterfilePDFSHeader::find_storage_order()
 #else      
                 num_rings_per_segment = matrix_size[1];
 #endif
+            }
+            else
+            {
+              warning("Expected 'matrix axis label [5] := timing positions'");
+              return true;
             }
         }
         else
@@ -1052,6 +1059,17 @@ bool InterfilePDFSHeader::post_processing()
     << endl;
 #endif
   
+  // TOF order
+  if (this->timing_poss_sequence.size())
+    {
+      if (this->timing_poss_sequence.size() != static_cast<std::vector<int>::size_type>(this->num_timing_poss))
+        {
+          warning("Inconsistent number of TOF bins (" + std::to_string(this->num_timing_poss) +
+          ") and size of the 'TOF bin order' list (" + std::to_string(this->timing_poss_sequence.size()) + ").");
+          //return true;
+        }
+    }
+
   // handle scanner
 
   shared_ptr<Scanner> guessed_scanner_ptr(Scanner::get_scanner_from_name(get_exam_info().originating_system));
